@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Editor/IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.*
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Logs
+*.log
