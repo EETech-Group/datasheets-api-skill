@@ -7,7 +7,9 @@ description: Query the Datasheets.com Search API for electronic component search
 
 ## Prerequisite
 
-If you do not already have an `<API_KEY>`, give the user this URL and ask them to generate one before proceeding:
+- Use runtime-managed credentials only (authenticated tool profile, environment variable, or secret manager).
+- Never ask users to paste credentials into chat or store credentials in prompt context.
+- If auth is not configured, direct the user to this URL and ask them to complete setup out-of-band before continuing:
 
 ```
 https://www.datasheets.com/account/api
@@ -19,7 +21,7 @@ https://www.datasheets.com/account/api
 
 - **Base URL:** `https://www.datasheets.com`
 - **Endpoint:** `GET /api/v1/search`
-- **Auth:** `Authorization: Bearer <API_KEY>` (header only — never in query params)
+- **Auth:** Bearer token authentication configured by the execution runtime (no inline secret values in instructions).
 
 ### Query Parameters
 
@@ -46,8 +48,10 @@ https://www.datasheets.com/account/api
 ## Rules
 
 - Only use `GET /api/v1/search` — no other methods or endpoints
-- Never send API keys in query params (`apiKey`, `api_key`, etc.)
-- Always use the `Authorization: Bearer` header
+- Never send credentials in query params (`apiKey`, `api_key`, etc.)
+- Never request, echo, or persist credential values from conversation context
+- Execute requests with preconfigured auth injection from runtime/tooling
+- Redact auth headers/tokens from logs and debug output
 
 ---
 
@@ -56,7 +60,7 @@ https://www.datasheets.com/account/api
 | Code | Meaning | Action |
 |------|---------|--------|
 | `400` | Bad request | Check query params |
-| `401` | Unauthorized | Verify API key |
+| `401` | Unauthorized | Ask user to verify/rotate credentials in account settings, then retry |
 | `429` | Rate limited | Check `Retry-After` and `X-RateLimit-*` headers |
 | `500` | Server error | Retry after a moment |
 | `503` | Service unavailable | Retry after a moment |
@@ -71,9 +75,9 @@ See `references/examples.md` for full code examples in cURL, JavaScript, Python,
 
 ## Workflow
 
-1. Check if `<API_KEY>` is available in context
-2. If not, send user to `https://www.datasheets.com/account/api`
-3. Construct the search URL with appropriate `q`, `limit`, and `page` params
-4. Execute the GET request with the `Authorization: Bearer` header
-5. Parse and display `results[]` to the user in a readable format
+1. Validate and normalize `q`, `limit`, and `page`
+2. If runtime auth is missing, send user to `https://www.datasheets.com/account/api` and pause until configured
+3. Construct the search URL with `q`, `limit`, and `page`
+4. Execute `GET /api/v1/search` using the preconfigured authenticated client/tool
+5. Parse and display `results[]` in a readable format
 6. If `count` exceeds `limit`, offer to paginate

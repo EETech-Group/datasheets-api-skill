@@ -11,10 +11,16 @@ This repository contains an Agents skill for searching electronic components wit
 
 - Base URL: `https://www.datasheets.com`
 - Endpoint: `GET /api/v1/search`
-- Auth: `Authorization: Bearer <API_KEY>`
+- Auth: Bearer token authentication injected by runtime credentials (not from chat context)
 
-If you need an API key, create one at:
+If you need credentials, create/manage them at:
 `https://www.datasheets.com/account/api`
+
+Security model for this skill:
+
+- Do not ask users to paste tokens into chat
+- Do not store raw tokens in repository files
+- Use environment variables or a secret manager at execution time
 
 ## Repository Structure
 
