@@ -1,19 +1,24 @@
 ---
 name: datasheets-search-api
-description: Query the Datasheets.com Search API for electronic component search results. Use this skill whenever a user wants to search for electronic components, parts, or semiconductors by MPN (manufacturer part number), keyword, or manufacturer name. Trigger this skill any time someone asks to "find a part", "search for a component", "look up a datasheet", or "query datasheets.com" — even if they don't explicitly ask for the API.
+description: >
+  Query the Datasheets.com Search API for electronic component search
+  results. Use this skill when a user wants to find parts or datasheets
+  by MPN (manufacturer part number), keyword, or manufacturer name.
+  Trigger it for requests to find a part, search for a component, look
+  up a datasheet, or query Datasheets.com, even if the user does not
+  mention the API.
 ---
 
 # Datasheets Public Search API Skill
 
 ## Prerequisite
 
-- Use runtime-managed credentials only (authenticated tool profile, environment variable, or secret manager).
+- Use runtime-managed credentials only, such as an authenticated tool
+  profile, environment variable, or secret manager.
 - Never ask users to paste credentials into chat or store credentials in prompt context.
-- If auth is not configured, direct the user to this URL and ask them to complete setup out-of-band before continuing:
-
-```
-https://www.datasheets.com/account/api
-```
+- If auth is not configured, direct the user to
+  `https://www.datasheets.com/account/api` and ask them to complete setup
+  out of band before continuing.
 
 ---
 
@@ -27,9 +32,9 @@ https://www.datasheets.com/account/api
 
 | Parameter | Required | Default | Max | Description |
 |-----------|----------|---------|-----|-------------|
-| `q`       | ✅ Yes   | —       | —   | Search query (MPN, keyword, or manufacturer) |
+| `q`       | Yes      | n/a     | n/a | Search query (MPN, keyword, or manufacturer) |
 | `limit`   | No       | `5`     | `10`| Results per page |
-| `page`    | No       | `1`     | —   | Page number |
+| `page`    | No       | `1`     | n/a | Page number |
 
 ### Response Shape
 
@@ -39,7 +44,7 @@ https://www.datasheets.com/account/api
   "page": 1,
   "limit": 5,
   "count": 42,
-  "results": [ ... ]
+  "results": []
 }
 ```
 
@@ -47,7 +52,7 @@ https://www.datasheets.com/account/api
 
 ## Rules
 
-- Only use `GET /api/v1/search` — no other methods or endpoints
+- Only use `GET /api/v1/search`; do not call other methods or endpoints
 - Never send credentials in query params (`apiKey`, `api_key`, etc.)
 - Never request, echo, or persist credential values from conversation context
 - Execute requests with preconfigured auth injection from runtime/tooling
@@ -69,15 +74,18 @@ https://www.datasheets.com/account/api
 
 ## Examples
 
-See `references/examples.md` for full code examples in cURL, JavaScript, Python, and TypeScript.
+See `references/examples.md` for full code examples in cURL, JavaScript,
+Python, and TypeScript.
 
 ---
 
 ## Workflow
 
 1. Validate and normalize `q`, `limit`, and `page`
-2. If runtime auth is missing, send user to `https://www.datasheets.com/account/api` and pause until configured
+2. If runtime auth is missing, send the user to
+   `https://www.datasheets.com/account/api` and pause until configured
 3. Construct the search URL with `q`, `limit`, and `page`
-4. Execute `GET /api/v1/search` using the preconfigured authenticated client/tool
-5. Parse and display `results[]` in a readable format
+4. Execute `GET /api/v1/search` using the preconfigured authenticated
+   client/tool
+5. Parse and display the `results` array in a readable format
 6. If `count` exceeds `limit`, offer to paginate

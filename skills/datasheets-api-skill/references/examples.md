@@ -1,4 +1,4 @@
-# Datasheets.com API — Code Examples
+# Datasheets.com API Code Examples
 
 These examples intentionally omit credential plumbing. Each snippet expects a
 runtime-provided HTTP client or session that already injects Datasheets.com
